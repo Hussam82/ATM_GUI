@@ -323,7 +323,7 @@ def recharge(amountToRecharge,phoneNumber):
     phoneNumber = phoneNumber.lower()
     # Check if the entered number is not some characters #
     if not(amountToRecharge.islower()) and not(phoneNumber.islower()):
-        if len(amountToRecharge) > 0 and len(phoneNumber) > 0  and len(phoneNumber) < 14 and int(amountToRecharge) > 0 and int(phoneNumber) > 0:
+        if len(amountToRecharge) > 0 and len(phoneNumber) == 13 and int(amountToRecharge) > 0 and int(phoneNumber) > 0:
             if int(amountToRecharge) <= int(oldBalance):
                 #update the balance#
                 userDataBase[accountNum]['Balance'] = int(oldBalance) - int(amountToRecharge)
