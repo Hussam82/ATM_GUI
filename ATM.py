@@ -273,22 +273,22 @@ def fawry_service():
     rechargeLabel = tkinter.Label(fawry_window, text = "Choose your service provider:", background="lavender")
     rechargeLabel.place(x = 0, y = 0)
  
-    orangeBtn = tkinter.Button(fawry_window, text = "Orange Recharge", command = recharge_service_window, height = 3, width = 14)
+    orangeBtn = tkinter.Button(fawry_window, text = "Orange Recharge", command = lambda:recharge_service_window("+2012"), height = 3, width = 14)
     orangeBtn.place(x = 30, y = 80) 
 
-    etislatBtn = tkinter.Button(fawry_window, text = "Etislat Recharge", command = recharge_service_window, height = 3, width = 14)
+    etislatBtn = tkinter.Button(fawry_window, text = "Etislat Recharge", command = lambda:recharge_service_window("+2011"), height = 3, width = 14)
     etislatBtn.place(x = 230, y = 80) 
 
-    vodafoneBtn = tkinter.Button(fawry_window, text = "Vodafone Recharge", command = recharge_service_window, height = 3, width = 14)
+    vodafoneBtn = tkinter.Button(fawry_window, text = "Vodafone Recharge", command = lambda:recharge_service_window("+2010"), height = 3, width = 14)
     vodafoneBtn.place(x = 30, y = 200) 
 
-    weBtn = tkinter.Button(fawry_window, text = "WE Recharge", command = recharge_service_window, height = 3, width = 14)
+    weBtn = tkinter.Button(fawry_window, text = "WE Recharge", command = lambda:recharge_service_window("+2015"), height = 3, width = 14)
     weBtn.place(x = 230, y = 200) 
 
 ########################################################################################################################################################     
 #                                                    Recharge window                                                                                   #
 # ###################################################################################################################################################### 
-def recharge_service_window():
+def recharge_service_window(startingNumber):
     global recharge_window
     recharge_window = tkinter.Tk()
     recharge_window.title("Phone Recharge")
@@ -300,6 +300,7 @@ def recharge_service_window():
     phoneLabel.place(x = 0, y = 20)
 
     phoneEntry = tkinter.Entry(recharge_window, width = 20)
+    phoneEntry.insert(0, startingNumber)
     phoneEntry.place(x = 180, y = 20) 
 
     amountLabel = tkinter.Label(recharge_window, text = "Enter the amount to recharge: ", background="lavender")
