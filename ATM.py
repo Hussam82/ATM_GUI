@@ -389,24 +389,3 @@ errCount = 0
 read_database()
 display_main_window()
 
-
-
-
-
-'''
-import tkinter as tk
-root = tk.Tk()
-var = tk.StringVar()
-
-max_len = 5
-def on_write(*args):
-    s = var.get()
-    if len(s) > max_len:
-        var.set(s[:max_len])
-
-var.trace_variable("w", on_write)
-entry = tk.Entry(root, textvariable=var)
-entry.pack()
-root.mainloop()
-
-'''
