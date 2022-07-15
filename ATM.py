@@ -29,7 +29,7 @@ def display_main_window():
     # Main Window #
     main_window = tkinter.Tk()
     main_window.title("ATM")
-    main_window.geometry("400x200")
+    main_window.geometry("400x200+700+300")
     main_window.resizable(False,False)
     main_window.configure(background = "lavender")
 
@@ -48,7 +48,7 @@ def display_main_window():
 
     closeMainWindowButton = tkinter.Button(main_window, height = 3, width = 14, text = "Quit", command=quit)
     closeMainWindowButton.place(x = 150, y = 80)
-    flag = 1
+    #flag = 1
     main_window.mainloop()
 
 ########################################################################################################################################################     
@@ -58,9 +58,10 @@ def check_account_num(accountNumEntry):
     global accountNum
     if accountNumEntry in userDataBase:
         accountNum = accountNumEntry
+        main_window.destroy()
         display_top_window()
     else:
-        messagebox.showerror("Error", "Invalid account number", parent = main_window)
+        messagebox.showerror("Error", "Invalid account number")
 
 
 ########################################################################################################################################################     
@@ -69,7 +70,7 @@ def check_account_num(accountNumEntry):
 def display_top_window():
     global top_level_window
     top_level_window = tkinter.Tk()
-    top_level_window.geometry("300x200")
+    top_level_window.geometry("300x200+700+300")
     top_level_window.resizable(False, False)
     top_level_window.title("Welcome")
     top_level_window.configure(background="lavender")
@@ -84,9 +85,12 @@ def display_top_window():
     pinLabel.place(x = 0, y = 70)
 
     pinButton = tkinter.Button(top_level_window, height = 3, width = 14, text = "Enter", command= lambda: pinCheck(pinEntry.get()))
-    pinButton.place(x = 60, y = 110)
-    top_level_window.mainloop()
+    pinButton.place(x = 20, y = 110)
 
+    pinButton = tkinter.Button(top_level_window, height = 3, width = 14, text = "Cancel", command= lambda:logOut_Func(top_level_window))
+    pinButton.place(x = 170, y = 110)
+
+    top_level_window.mainloop()
 
 ########################################################################################################################################################     
 #                                                       Checking the user PIN                                                                          #
@@ -94,31 +98,34 @@ def display_top_window():
 def pinCheck(pinEntry):
     global errCount
     global userDataBase
-    if (pinEntry == userDataBase[accountNum]['Password']) and (userDataBase[accountNum]['State'] == 'Unblocked'):
+    pin = pinEntry
+    if (pin == userDataBase[accountNum]['Password']) and (userDataBase[accountNum]['State'] == 'Unblocked'):
         errCount = 0
-        main_window.destroy()
+        #main_window.destroy()
         top_level_window.destroy()
         display_options_window()
     elif errCount == 3 or userDataBase[accountNum]['State'] == 'Blocked':
         errCount = 0
-        messagebox.showerror("Error", "You account has been blocked.\nPlease visit the branch", parent = top_level_window)
+        messagebox.showerror("Error", "You account has been blocked.\nPlease visit the branch")
         top_level_window.destroy()
         # Mark that account as blocked state #
         userDataBase[accountNum]['State'] = 'Blocked'
         update_data_base()
+        display_main_window()
     else:
         errCount +=1
-        messagebox.showerror("Error", "Invalid password.\nPlease try again", parent = top_level_window)
+        messagebox.showerror("Error", "Invalid password.\nPlease try again")
 
 
 ########################################################################################################################################################     
 #                                                          Home page Window                                                                            #
 # ######################################################################################################################################################   
 def display_options_window():
+    flag = 1
     global options_window
     options_window = tkinter.Tk()
     options_window.title("ATM")
-    options_window.geometry("500x330")
+    options_window.geometry("500x330+700+300")
     options_window.resizable(False,False)
     options_window.configure(background = "lavender")
     
@@ -139,22 +146,27 @@ def display_options_window():
     fawryServiceBtn = tkinter.Button(options_window, text = "Fawry Service", command=fawry_service, height = 3, width = 14)
     fawryServiceBtn.place(x = 330, y = 60)
 
-    logOutBtn = tkinter.Button(options_window, text = "Log Out", command=display_main_window, height = 3, width = 14)
+    logOutBtn = tkinter.Button(options_window, text = "Log Out", command=lambda:logOut_Func(options_window), height = 3, width = 14)
     logOutBtn.place(x = 330, y = 140)
 
-    exitBtn = tkinter.Button(options_window, text = "Exit", command=lambda:close_window(options_window), height = 3, width = 14)
+    exitBtn = tkinter.Button(options_window, text = "Exit", command=quit, height = 3, width = 14)
     exitBtn.place(x = 330, y = 230)
 
     options_window.mainloop()
+
+def logOut_Func(window_to_close):
+    window_to_close.destroy()
+    display_main_window()
 
 ########################################################################################################################################################     
 #                                                       Cash Withdraw Window                                                                           #
 # ######################################################################################################################################################  
 def cash_withdraw_window():
+    options_window.destroy()
     global cashWithdraw_window
     cashWithdraw_window = tkinter.Tk()
     cashWithdraw_window.title("Cash Withdraw")
-    cashWithdraw_window.geometry("400x200")
+    cashWithdraw_window.geometry("400x200+700+300")
     cashWithdraw_window.resizable(False,False)
     cashWithdraw_window.configure(background = "lavender")
 
@@ -165,7 +177,11 @@ def cash_withdraw_window():
     cashWithdrawEntry.place(x = 220, y = 0)
     # Will give error in case of not entering anything in the entry #
     cashWithdrawBtn = tkinter.Button(cashWithdraw_window, text = "Withdraw", command=lambda: cash_withdraw(cashWithdrawEntry.get()), height = 3, width = 14)
-    cashWithdrawBtn.place(x = 100, y = 50)
+    cashWithdrawBtn.place(x = 50, y = 50)
+
+    closeWithdrawBtn = tkinter.Button(cashWithdraw_window, text = "Cancel", command=lambda:close_window(cashWithdraw_window), height = 3, width = 14)
+    closeWithdrawBtn.place(x = 200, y = 50)
+    
 
 ########################################################################################################################################################     
 #                                                       Function to check for the entered amount                                                       #
@@ -183,19 +199,20 @@ def cash_withdraw(cashToWithdraw):
                         #update the balance#
                         userDataBase[accountNum]['Balance'] = int(oldBalance) - int(cashToWithdraw)
                         update_data_base()
-                        messagebox.showinfo("Thank You", "Thank You!", parent = options_window)
+                        messagebox.showinfo("Thank You", "Thank You!")
                         cashWithdraw_window.destroy()
+                        display_options_window()
                     else:
-                        messagebox.showerror("Error", "Enter multiples of 100 only. Please Try again", parent = cashWithdraw_window) 
+                        messagebox.showerror("Error", "Enter multiples of 100 only. Please Try again") 
                 else:
-                    messagebox.showerror("Error", "Maximum amount is 5000. Please Try again", parent = cashWithdraw_window) 
+                    messagebox.showerror("Error", "Maximum amount is 5000. Please Try again") 
             else:
-                messagebox.showerror("Error", "No sufficient balance", parent = options_window)
+                messagebox.showerror("Error", "No sufficient balance",)
                 cashWithdraw_window.destroy()
         else:
-            messagebox.showerror("Error", "Enter a valid amount.\nPlease try again", parent = cashWithdraw_window)
+            messagebox.showerror("Error", "Enter a valid amount.\nPlease try again")
     else:
-        messagebox.showerror("Error", "Enter a valid amount.\nPlease try again", parent = cashWithdraw_window)
+        messagebox.showerror("Error", "Enter a valid amount.\nPlease try again")
 
 ########################################################################################################################################################     
 #                                                       Function to withdraw money                                                                     #
@@ -210,10 +227,11 @@ def ATM_Actuator_Out(cashToWithdraw):
 #                                                      Balance Inquiry Window                                                                          #
 # ######################################################################################################################################################  
 def balance_inquiry():
+    options_window.destroy()
     read_database()
     inquiry_window = tkinter.Tk()
     inquiry_window.title("Balance Inquiry")
-    inquiry_window.geometry("400x200")
+    inquiry_window.geometry("400x200+700+300")
     inquiry_window.resizable(False,False)
     inquiry_window.configure(background = "lavender")
 
@@ -230,10 +248,11 @@ def balance_inquiry():
 #                                                     Password Change Window                                                                           #
 # ######################################################################################################################################################  
 def password_change():
+    options_window.destroy()
     global passChange_window
     passChange_window = tkinter.Tk()
     passChange_window.title("Passowrd Change")
-    passChange_window.geometry("400x200")
+    passChange_window.geometry("400x200+700+300")
     passChange_window.resizable(False,False)
     passChange_window.configure(background = "lavender")
 
@@ -250,7 +269,7 @@ def password_change():
     passChangeBtn = tkinter.Button(passChange_window, text = "Enter", command=lambda:check_new_pass(newPassEntry.get(), confirmNewPassEntry.get()), height = 3, width = 14)
     passChangeBtn.place(x = 50, y = 100)
 
-    closePassChangeBtn = tkinter.Button(passChange_window, text = "Close", command = lambda: close_window(passChange_window), height = 3, width = 14)
+    closePassChangeBtn = tkinter.Button(passChange_window, text = "Cancel", command = lambda:close_window(passChange_window), height = 3, width = 14)
     closePassChangeBtn.place(x = 200, y = 100)
 
     
@@ -263,10 +282,11 @@ def password_change():
 #                                                      Fawry Service Window                                                                            #
 # ######################################################################################################################################################  
 def fawry_service():
+    options_window.destroy()
     global fawry_window
     fawry_window = tkinter.Tk()
     fawry_window.title("Phone Recharge")
-    fawry_window.geometry("400x300")
+    fawry_window.geometry("400x300+700+300")
     fawry_window.resizable(False,False)
     fawry_window.configure(background = "lavender")
 
@@ -293,7 +313,7 @@ def recharge_service_window(startingNumber):
     global recharge_window
     recharge_window = tkinter.Tk()
     recharge_window.title("Phone Recharge")
-    recharge_window.geometry("400x300")
+    recharge_window.geometry("400x300+700+300")
     recharge_window.resizable(False,False)
     recharge_window.configure(background = "lavender")
 
@@ -311,7 +331,12 @@ def recharge_service_window(startingNumber):
     amountEntry.place(x = 180, y = 50) 
 
     rechargeBtn = tkinter.Button(recharge_window, text = "Recharge", command = lambda: recharge(amountEntry.get(),phoneEntry.get()), height = 3, width = 14)
-    rechargeBtn.place(x = 20, y = 150) 
+    rechargeBtn.place(x = 50, y = 150) 
+
+    rechargeBtn = tkinter.Button(recharge_window, text = "Cancel", command = lambda:close_window(recharge_window), height = 3, width = 14)
+    rechargeBtn.place(x = 220, y = 150) 
+
+    
 
 
 ########################################################################################################################################################     
@@ -331,8 +356,9 @@ def recharge(amountToRecharge,phoneNumber):
                 update_data_base()
                 messagebox.showinfo("Thank You", "Thank You!", parent = recharge_window)
                 recharge_window.destroy()
+                display_options_window()
             else:
-                messagebox.showerror("Error", "No sufficient balance", parent = options_window)
+                messagebox.showerror("Error", "No sufficient balance")
                 recharge_window.destroy()
         elif len(amountToRecharge) == 0 or int(amountToRecharge) < 0:
             messagebox.showerror("Error", "Enter a valid amount.\nPlease try again", parent = recharge_window)
@@ -353,12 +379,13 @@ def check_new_pass(newPassEntry, confirmNewPassEntry):
     confirmNewPassEntry = confirmNewPassEntry.lower()
     if not(newPassEntry.islower()) and not(confirmNewPassEntry.islower()) and len(newPassEntry) == 4 and len(confirmNewPassEntry) == 4:
         if newPassEntry == confirmNewPassEntry and newPassEntry != ''  and confirmNewPassEntry != '':
-            messagebox.showinfo("Thank You", "Thank You. Your password has been changed succefully!", parent = options_window)
+            messagebox.showinfo("Thank You", "Thank You. Your password has been changed successfully!")
             passChange_window.destroy()
             # Update the Dict #
             userDataBase[accountNum]['Password'] = newPassEntry
             # Update the database file #
             update_data_base()
+            display_options_window()
         else:
             messagebox.showerror("Error", "Passwords don't match.\nPlease try again.", parent = passChange_window)
     else:
@@ -377,10 +404,11 @@ def update_data_base():
 
 
 ########################################################################################################################################################     
-#                                                    Function to close any window                                                                      #
+#                                           Function to close any window and display options window                                                    #
 # ######################################################################################################################################################  
 def close_window(window_to_close):
     window_to_close.destroy()
+    display_options_window()
 
 
 # Variable to count the number of wrongly entered account number #
