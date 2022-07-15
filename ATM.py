@@ -289,6 +289,7 @@ def fawry_service():
 #                                                    Recharge window                                                                                   #
 # ###################################################################################################################################################### 
 def recharge_service_window(startingNumber):
+    fawry_window.destroy()
     global recharge_window
     recharge_window = tkinter.Tk()
     recharge_window.title("Phone Recharge")
@@ -330,11 +331,9 @@ def recharge(amountToRecharge,phoneNumber):
                 update_data_base()
                 messagebox.showinfo("Thank You", "Thank You!", parent = recharge_window)
                 recharge_window.destroy()
-                fawry_window.destroy()
             else:
                 messagebox.showerror("Error", "No sufficient balance", parent = options_window)
                 recharge_window.destroy()
-                fawry_window.destroy()
         elif len(amountToRecharge) == 0 or int(amountToRecharge) < 0:
             messagebox.showerror("Error", "Enter a valid amount.\nPlease try again", parent = recharge_window)
         elif len(phoneNumber) == 0 or int(phoneNumber) < 0:
